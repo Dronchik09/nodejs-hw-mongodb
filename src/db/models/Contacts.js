@@ -8,14 +8,14 @@ const contactSchema = Schema(
         reqired : true,
     },
     phoneNumber: {
-        type: Number,
+        type: String,
         reqired: true,
     },
     email :{
         type: String,
 
     },
-    isFavorite :{
+    isFavourite :{
         type: Boolean,
         default: false,
     },
