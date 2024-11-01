@@ -3,8 +3,8 @@ import cors from "cors";
 import pino from "pino-http";
 import dotenv from "dotenv";
 import { env } from './utils/env.js';
-import * as contactServices from "./services/contacts.js";
 
+import contactsRouter from "./routers/contacts.js";
 
 const PORT = Number(env("PORT", 3000));
 
@@ -20,35 +20,12 @@ export const startServer = ()=>{
         }
     });
     app.use(logger);
+
+    app.use("/contacts", contactsRouter);
     app.get('/', (req, res) => {
       res.json({
         message: 'Hello to contactlist!',
       });
-    });
-    app.get('/contacts', async (req, res) => {
-        const contacts = await contactServices.getAllContacts();
-        res.status(200).json({
-            status: 200,
-            message: "Successfully found contacts!",
-            data: contacts,
-        });
-
-      });
-    app.get('/contacts/:contactId', async (req, res) => {
-        const { contactId } = req.params;
-        const contacts = await contactServices.getContactsById(contactId);
-        if (!contacts) {
-          res.status(404).json({
-              status:404,
-            message: 'Contact not found',
-          });
-          return;
-        }
-        res.status(200).json({
-            status: 200,
-            message: `Successfully found contact with id ${contactId}!`,
-            data: contacts,
-        });
     });
     app.use('*', (req, res) => {
       res.status(404).json({
