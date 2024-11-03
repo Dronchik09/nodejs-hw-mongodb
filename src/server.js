@@ -24,13 +24,13 @@ export const startServer = ()=>{
         },
       }),
     );
-
-    app.use("/contacts", contactsRouter);
     app.get('/', (req, res) => {
       res.json({
         message: 'Hello to contactlist!',
       });
     });
+    app.use("/contacts", contactsRouter);
+
     app.use('*', notFoundHandler);
     app.use(errorHandler);
     app.listen(PORT, () => {
