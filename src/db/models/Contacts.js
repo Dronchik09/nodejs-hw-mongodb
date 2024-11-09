@@ -33,6 +33,8 @@ const contactSchema = new Schema(
     },
 );
 
+export const sortByList = ["name", "phoneNumber", "email", "isFavorite", "contactType"];
+
 const ContactCollection = model("contacts", contactSchema);
 
 export default ContactCollection;
