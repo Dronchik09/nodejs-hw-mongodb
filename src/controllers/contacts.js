@@ -7,10 +7,15 @@ import { parseSortParams } from "../utils/parseSortParams.js";
 
 import { sortByList } from "../db/models/Contacts.js";
 
+import { parseFilterParams } from "../utils/parseFilterParams.js";
+
 export const getContactsController = async (req, res, next) => {
     const {page, perPage} = parsePaginationParams(req.query);
     const {sortBy, sortOrder} = parseSortParams(req.query, sortByList);
-        const data = await contactServices.getAllContacts({page, perPage, sortBy, sortOrder});
+    const filter = parseFilterParams(req.query);
+    const {_id: userId} = req.user;
+    filter.userId = userId;
+    const data = await contactServices.getAllContacts({page, perPage, sortBy, sortOrder});
         res.status(200).json({
         status: 200,
         message: "Successfully found contacts!",
@@ -32,8 +37,8 @@ export const getContactsController = async (req, res, next) => {
 };
 
 export const addContactController = async (req,res) => {
-
-    const data = await contactServices.addContact(req.body);
+    const {_id: userId} = req.user;
+    const data = await contactServices.addContact({...req.body,userId});
 
     res.status(201).json({
         status: 201,
