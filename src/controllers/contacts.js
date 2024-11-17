@@ -3,6 +3,8 @@ import * as contactServices from "../services/contacts.js";
 
 import { parsePaginationParams } from "../utils/parsePaginationParams.js";
 
+import mongoose from 'mongoose';
+
 import { parseSortParams } from "../utils/parseSortParams.js";
 
 import { sortByList } from "../db/models/Contacts.js";
@@ -16,7 +18,7 @@ export const getContactsController = async (req, res, next) => {
     const {_id: userId} = req.user;
     filter.userId = userId;
 
-    const data = await contactServices.getAllContacts({page, perPage, sortBy, sortOrder,filter});
+    const data = await contactServices.getAllContacts({page, perPage, sortBy, sortOrder,filter}, userId);
         res.status(200).json({
         status: 200,
         message: "Successfully found contacts!",
@@ -24,8 +26,12 @@ export const getContactsController = async (req, res, next) => {
     });
 };
  export const getContactsByIdController = async (req, res) => {
-        const { id } = req.params;
-    const contact = await contactServices.getContactsById(id);
+    const { _id: userId } = req.user;
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw createHttpError(404, 'Contact not found');
+      }
+    const contact = await contactServices.getContactsById(id, userId);
     if (!contact) {
         throw createHttpError(404, 'Contact not found!');
     }
