@@ -15,7 +15,8 @@ export const getContactsController = async (req, res, next) => {
     const filter = parseFilterParams(req.query);
     const {_id: userId} = req.user;
     filter.userId = userId;
-    const data = await contactServices.getAllContacts({page, perPage, sortBy, sortOrder});
+
+    const data = await contactServices.getAllContacts({page, perPage, sortBy, sortOrder,filter});
         res.status(200).json({
         status: 200,
         message: "Successfully found contacts!",
