@@ -31,7 +31,7 @@ export const getContactsController = async (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         throw createHttpError(404, 'Contact not found');
       }
-    const contact = await contactServices.getContactsById(id, userId);
+    const contact = await contactServices.getContactById(id, userId);
     if (!contact) {
         throw createHttpError(404, 'Contact not found!');
     }
