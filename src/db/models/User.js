@@ -28,5 +28,5 @@ const userSchema = new Schema (
     delete obj.password;
     return obj;
   };
-const UserCollection = model("user", userSchema);
+const UserCollection = model("users", userSchema);
 export default UserCollection;

@@ -2,11 +2,10 @@ import ContactCollection from "../db/models/Contacts.js";
 
 import { calculatePaginationData } from "../utils/calculatePaginationData.js";
 
-export const getAllContacts = async({page = 1, perPage = 10, sortBy = "_id", sortOrder = "asc", filter = {},}) => {
+export const getAllContacts = async({page = 1, perPage = 10, sortBy = "_id", sortOrder = "asc", filter = {},userId}) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
-  const query = ContactCollection.find({ userId: filter.userId || undefined });
-
+  const query = ContactCollection.find({userId});
   if(filter.userId){
     query.where('userId').equals(filter.userId);
   }
@@ -35,7 +34,7 @@ export const getContactById = async (_id, userId) => {
 
 export const addContact = payload => ContactCollection.create(payload);
 
-export const updateContact = async ({_id, payload, userId, options={}}) =>{
+export const updateContact = async ({_id, userId}, payload, options={}) =>{
   const rawResult = await ContactCollection.findOneAndUpdate({_id, userId}, payload,
     {...options,
       new:true,
@@ -49,7 +48,7 @@ export const updateContact = async ({_id, payload, userId, options={}}) =>{
 };
 };
 
-export const deleteContact = async (_id, userId) =>{
+export const deleteContact = async ({_id, userId}) =>{
   const contact = await ContactCollection.findOneAndDelete({
     _id,
     userId,
