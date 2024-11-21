@@ -1,15 +1,15 @@
 import { Schema, model } from "mongoose";
 
 
-const contactSchema = Schema(
+const contactSchema = new Schema(
     {
     name: {
         type: String,
-        reqired : true,
+        required : true,
     },
     phoneNumber: {
         type: String,
-        reqired: true,
+        required: true,
     },
     email :{
         type: String,
@@ -21,7 +21,7 @@ const contactSchema = Schema(
     },
     contactType: {
         type: String,
-        reqired : true,
+        required : true,
         enum: ['work', 'home', 'personal'],
         default: "personal",
     },
