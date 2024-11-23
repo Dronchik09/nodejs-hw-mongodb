@@ -1,11 +1,23 @@
 import createHttpError from "http-errors";
 import bcrypt from "bcrypt";
 import {randomBytes} from "crypto";
-
+import * as fs from "node:fs/promises";
+import Handlebars from "handlebars";
+import * as path from "node:path";
+import jwt from "jsonwebtoken";
 import UserCollection from "../db/models/User.js";
 import SessionCollection  from "../db/models/Session.js";
 
+import { sendEmail } from "../utils/sendEmail.js";
+import { env } from "../utils/env.js";
+import { TEMPLATE_DIR } from "../constants/index.js";
 import { accessTokenLifetime, refreshTokenLifetime } from "../constants/users.js";
+
+
+const emailTemplatePath = path.join(TEMPLATE_DIR, "verify-email.html");
+
+const appDomain = env("APP_DOMAIN");
+const jwtSecret = env("JWT_SECRET");
 
 const createSession = ()=>{
     const accessToken = randomBytes(30).toString("base64");
@@ -25,7 +37,25 @@ export const register = async payload =>{
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
-    return UserCollection.create({...payload, password: hashPassword});
+    const newUser =  UserCollection.create({...payload, password: hashPassword});
+
+    const templateSource = await fs.readFile(emailTemplatePath, "utf-8");
+
+    const template = Handlebars.compile(templateSource);
+
+    const token = jwt.sign({email}, jwtSecret, {expiresIn: "24h"});
+    const html = template({
+        link:`${appDomain}/auth/verify?token=${token}`,
+    });
+
+    const verifyEmail = {
+        to: email,
+        subject: "Verify email",
+        html,
+    };
+    await sendEmail(verifyEmail);
+
+    return newUser;
 };
 
 
@@ -33,6 +63,9 @@ export const login = async ({email, password}) =>{
     const user = await UserCollection.findOne({email});
     if(!user){
         throw createHttpError(401, "Email or password invalid");
+    }
+    if(!user.verify){
+        throw createHttpError(401, "Email not verified");
     }
     const passwordCompare = await bcrypt.compare(password, user.password);
     if(!passwordCompare){
