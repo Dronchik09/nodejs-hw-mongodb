@@ -7,7 +7,7 @@ import { env } from './utils/env.js';
 
 import contactsRouter from "./routers/contacts.js";
 import authRouter from "./routers/auth.js";
-
+import { UPLOAD_DIR } from './constants/index.js';
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 
@@ -32,6 +32,7 @@ export const startServer = ()=>{
         message: 'Hello to contactlist!',
       });
     });
+    app.use('/uploads', express.static(UPLOAD_DIR));
     app.use("/auth", authRouter);
     app.use("/contacts", contactsRouter);
 
