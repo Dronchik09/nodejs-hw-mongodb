@@ -11,6 +11,7 @@ import SessionCollection  from "../db/models/Session.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { TEMPLATE_DIR } from "../constants/index.js";
 import { env } from "../utils/env.js";
+import { validateCode, getFullNameFromGoogleTokenPayload } from "../utils/googleOAuth2.js";
 import { accessTokenLifetime, refreshTokenLifetime } from "../constants/users.js";
 
 
@@ -144,4 +145,30 @@ export const requestResetToken = async (email) => {
       { _id: user._id },
       { password: encryptedPassword },
     );
+  };
+  export const loginOrSignupWithGoogle = async code =>{
+    const loginTicket = validateCode(code);
+    const payload = loginTicket.getPayload();
+    if(!payload){
+      throw createHttpError(401);
+    }
+
+    let user = await UserCollection.findOne({
+      email: payload.email,
+    });
+    if(!user){
+      const password = await bcrypt.hash(randomBytes(10), 10);
+      const username = getFullNameFromGoogleTokenPayload(payload);
+      user = UserCollection.create({
+        email: payload.email,
+        username,
+        password,
+      });
+    }
+    const newSession = createSession();
+
+  return await SessionCollection.create({
+    userId: user._id,
+    ...newSession,
+  });
   };

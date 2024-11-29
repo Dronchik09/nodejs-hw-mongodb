@@ -8,6 +8,7 @@ import { requestResetEmailController } from '../controllers/auth.js';
 import { registerUserSchema, loginUserSchema } from "../validation/auth.js";
 import { resetPasswordSchema } from '../validation/auth.js';
 import { resetPasswordController } from '../controllers/auth.js';
+import { loginWithGoogleOAuthSchema } from "../validation/auth.js";
 const authRouter = Router();
 
 authRouter.post("/register", validateBody(registerUserSchema), ctrlWrapper(authControllers.registerController));
@@ -16,4 +17,6 @@ authRouter.post("/refresh", ctrlWrapper(authControllers.refreshSessionController
 authRouter.post("/logout", ctrlWrapper(authControllers.logoutController));
 authRouter.post( '/send-reset-email',validateBody(requestResetEmailSchema),ctrlWrapper(requestResetEmailController));
 authRouter.post('/reset-pwd',validateBody(resetPasswordSchema),ctrlWrapper(resetPasswordController));
+authRouter.get('/get-oauth-url',ctrlWrapper(authControllers.getGoogleOAuthUrlController));
+authRouter.post('/confirm-oauth',validateBody(loginWithGoogleOAuthSchema),ctrlWrapper(authControllers.loginWithGoogleController));
 export default authRouter;
