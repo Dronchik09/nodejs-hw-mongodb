@@ -14,7 +14,7 @@ tags:
     description: Auth operations.
 servers:
   - url: http://localhost:3000
-  - url: https://nodejs-hw7-z9x6.onrender.com
+  - url: https://nodejs-hw7-42ml.onrender.com
 paths:
   /auth/register:
     post:
