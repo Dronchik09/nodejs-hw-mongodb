@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import pino from "pino-http";
 import dotenv from "dotenv";
 import { env } from './utils/env.js';
-
+import { swaggerDocs } from "./middlewares/swaggerDocs.js";
 import contactsRouter from "./routers/contacts.js";
 import authRouter from "./routers/auth.js";
 import { UPLOAD_DIR } from './constants/index.js';
@@ -35,6 +35,7 @@ export const startServer = ()=>{
     app.use('/uploads', express.static(UPLOAD_DIR));
     app.use("/auth", authRouter);
     app.use("/contacts", contactsRouter);
+    app.use('/api-docs', swaggerDocs());
 
     app.use('*', notFoundHandler);
     app.use(errorHandler);

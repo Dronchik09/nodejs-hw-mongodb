@@ -147,7 +147,7 @@ export const requestResetToken = async (email) => {
     );
   };
   export const loginOrSignupWithGoogle = async code =>{
-    const loginTicket = validateCode(code);
+    const loginTicket = await validateCode(code);
     const payload = loginTicket.getPayload();
     if(!payload){
       throw createHttpError(401);
