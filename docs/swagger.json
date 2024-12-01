@@ -11,10 +11,10 @@
   },
   "servers": [
     {
-      "url": "https://nodejs-hw7-4ast.onrender.com"
+      "url": "http://localhost:3000"
     },
     {
-      "url": "https://example.com/api/v1"
+      "url": "https://nodejs-hw7-z9x6.onrender.com"
     }
   ],
   "tags": [
